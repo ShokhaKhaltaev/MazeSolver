@@ -8,20 +8,7 @@ import java.util.Scanner;
 public class MazeSolver {
 	
 	public static void main(String[] args) throws FileNotFoundException {
-		ArrayList<Maze> mazes = new ArrayList<Maze>();
-		Maze m = new Maze();
-		
-		Scanner scanner = new Scanner(new File("mazes.txt"));
-		int rows = Integer.parseInt(scanner.nextLine());
-		m.maze = new int[rows][];
-		
-		for(int i = 0; i < rows; i++) {
-			String line = scanner.nextLine();
-			m.maze[i] = Arrays.stream(line.split(", ")).mapToInt(Integer::parseInt).toArray();
-		}
-		m.start = new Position(Integer.parseInt(scanner.nextLine()), Integer.parseInt(scanner.nextLine()));
-		mazes.add(m);
-		
+		ArrayList<Maze> mazes = readMazes();
 		int i = 0;
 		while(i < mazes.size()) {
 			if(solveMaze(mazes.get(i))) {
@@ -33,6 +20,28 @@ public class MazeSolver {
 		}
 	}
 	
+	private static ArrayList<Maze> readMazes() throws FileNotFoundException {
+		ArrayList<Maze> mazes = new ArrayList<Maze>();
+		Scanner scanner = new Scanner(new File("mazes.txt"));
+		
+		while(scanner.hasNext()) {
+		
+			Maze m = new Maze();
+			int rows = Integer.parseInt(scanner.nextLine());
+			m.maze = new int[rows][];
+			
+			for(int i = 0; i < rows; i++) {
+				String line = scanner.nextLine();
+				m.maze[i] = Arrays.stream(line.split(", ")).mapToInt(Integer::parseInt).toArray();
+			}
+			m.start = new Position(Integer.parseInt(scanner.nextLine()), Integer.parseInt(scanner.nextLine()));
+			scanner.nextLine();
+			mazes.add(m);
+		}
+		scanner.close();
+		return mazes;
+	}
+
 	public static boolean isValid(int y, int x, Maze m) {
 		if(y < 0 || y >= m.maze.length || x < 0 || x >= m.maze[y].length) {
 			return false;
